@@ -1,0 +1,11 @@
+# Created by .ignore support plugin (hsz.mobi)
+    # filter eclipse dir
+    /.settings/
+
+    # filter idea file
+    *.iml
+    */*.iml
+
+    #filter idea dir
+    .idea/
+    /out/
