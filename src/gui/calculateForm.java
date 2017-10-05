@@ -8,6 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.NumberFormat;
 
 /**
@@ -24,6 +27,10 @@ public class calculateForm extends JFrame implements ActionListener {
     private JPanel[] quesPanel=new JPanel[mainForm.num];
     private int rightCount,wrongCount=0;
     private boolean isRun=false;
+    private BufferedWriter writer;
+    private BufferedReader reader;
+    private String rRead;
+    private String wRead;
     private MyRunable myTimeRunable=new MyRunable();
     //创建各组件
     JPanel panel = (JPanel)getContentPane();
@@ -31,6 +38,8 @@ public class calculateForm extends JFrame implements ActionListener {
     JLabel label1=new JLabel("你的答案:");
     JLabel label2=new JLabel("正确答案:");
     JLabel label3=new JLabel("历史记录:");
+    JLabel rLabel=new JLabel("正确量:0");
+    JLabel wLabel=new JLabel("错误量:0");
     JLabel timeLabel=new JLabel("00:00:00");
     JButton timeButton=new JButton("开始计时");
     JButton submitButton=new JButton("提交答案");
@@ -44,8 +53,10 @@ public class calculateForm extends JFrame implements ActionListener {
         label0.setBounds(new Rectangle(50,40,30,25));
         label1.setBounds(new Rectangle(320,40,60,25));
         label2.setBounds(new Rectangle(500,40,60,25));
-        label3.setBounds(new Rectangle(500,553,60,25));
-        timeLabel.setBounds(new Rectangle(50,10,120,25));
+        label3.setBounds(new Rectangle(50,620,60,25));
+        rLabel.setBounds(new Rectangle(140,620,60,25));
+        wLabel.setBounds(new Rectangle(220, 620, 60, 25));
+        timeLabel.setBounds(new Rectangle(500,550,120,25));
         timeLabel.setFont(new java.awt.Font("Consolas",Font.BOLD,18));
         timeButton.setBounds(new Rectangle(60,550,100,30));
         submitButton.setBounds(new Rectangle(280,550,100,30));
@@ -54,13 +65,14 @@ public class calculateForm extends JFrame implements ActionListener {
         panel.add(label1);
         panel.add(label2);
         panel.add(label3);
+        panel.add(rLabel);
+        panel.add(wLabel);
         panel.add(timeLabel);
         panel.add(timeButton);
         panel.add(submitButton);
     }
 
-    public calculateForm()
-    {
+    public calculateForm() throws URISyntaxException {
         try{
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             placeComponent();
@@ -68,10 +80,11 @@ public class calculateForm extends JFrame implements ActionListener {
         catch(Exception exception){
             exception.printStackTrace();
         }
-        display();
+        ReadHistory();
+        Display();
     }
 
-    public void display(){
+    public void Display(){
         //开启计时线程
         new Thread(myTimeRunable).start();
         //显示题目及作答区域
@@ -149,11 +162,29 @@ public class calculateForm extends JFrame implements ActionListener {
                 int cost=Integer.parseInt(a[1])*60+Integer.parseInt(a[2]);
                 //消息框显示最终用时及正确率
                 JOptionPane.showMessageDialog(null,"用时:"+cost+"秒\n"+"正确率:"+ratio+"%");
+                //写入对错数
+                rightCount=rightCount+Integer.parseInt(rRead);
+                wrongCount=wrongCount+Integer.parseInt(wRead);
+                Integer right=new Integer(rightCount);
+                Integer wrong=new Integer(wrongCount);
+                try {
+                    URL url=calculateForm.class.getResource("history.txt");
+                    File file2 = new File(url.toURI());
+                    writer = new BufferedWriter(new FileWriter(file2));
+                    writer.write(right.toString());
+                    writer.newLine();
+                    writer.write(wrong.toString());
+                    writer.close();
+                }catch (IOException ie){
+                    ie.printStackTrace();
+                } catch (URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
     }
 
-    //计时功能
+    /*------------------------计时功能-----------------------*/
     private class MyRunable implements Runnable{
         private int hour = 0;
         private int min = 0;
@@ -195,6 +226,27 @@ public class calculateForm extends JFrame implements ActionListener {
                 }
             }
         }
+    }
+
+    /*--------------------历史读取功能-----------------*/
+    public void ReadHistory() throws URISyntaxException {
+        try{
+            //读取对错数目
+            URL url=calculateForm.class.getResource("history.txt");
+            File file1=new File(url.toURI());
+            reader=new BufferedReader(new FileReader(file1));
+            rRead=reader.readLine();
+            wRead=reader.readLine();
+            reader.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        if(rRead==null&&wRead==null){
+            rRead="0";
+            wRead="0";
+        }
+        rLabel.setText("正确量:"+rRead);
+        wLabel.setText("错误量"+wRead);
     }
 
     public void actionPerformed(ActionEvent e){

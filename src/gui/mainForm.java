@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URISyntaxException;
 
 /**
  * Created by Zhiyi Zhang on 2017/9/28.
@@ -103,7 +104,12 @@ public class mainForm extends JFrame implements ActionListener{
             }
             else{
                 num=Integer.parseInt(inputField.getText());
-                calculateForm cf = new calculateForm();
+                calculateForm cf = null;
+                try {
+                    cf = new calculateForm();
+                } catch (URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
                 //移除原有内容
                 frame.remove(this.getContentPane());
                 frame.setVisible(false);
