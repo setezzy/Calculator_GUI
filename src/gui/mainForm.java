@@ -1,6 +1,9 @@
 package gui;
 
+import com.alee.laf.WebLookAndFeel;
+
 import javax.swing.*;
+import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,7 +41,15 @@ public class mainForm extends JFrame implements ActionListener{
     }
 
     public static void main(String args[]){
-        mainForm main=new mainForm();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                WebLookAndFeel.globalControlFont  = new FontUIResource("微软雅黑",0, 14);
+                WebLookAndFeel.globalMenuFont = new FontUIResource("微软雅黑",0,13);
+                WebLookAndFeel.install();
+                mainForm main=new mainForm();
+            }
+        });
     }
 
     //窗体内容
