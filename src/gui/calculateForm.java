@@ -50,7 +50,7 @@ public class calculateForm extends JFrame implements ActionListener {
         panel.setLayout(null);
         frame.add(panel);
         //设置组件位置及大小
-        label0.setBounds(new Rectangle(50,40,30,25));
+        label0.setBounds(new Rectangle(50,40,60,25));
         label1.setBounds(new Rectangle(320,40,60,25));
         label2.setBounds(new Rectangle(500,40,60,25));
         label3.setBounds(new Rectangle(50,620,60,25));
@@ -58,8 +58,8 @@ public class calculateForm extends JFrame implements ActionListener {
         wLabel.setBounds(new Rectangle(220, 620, 60, 25));
         timeLabel.setBounds(new Rectangle(500,550,120,25));
         timeLabel.setFont(new java.awt.Font("Consolas",Font.BOLD,18));
-        timeButton.setBounds(new Rectangle(60,550,100,30));
-        submitButton.setBounds(new Rectangle(280,550,100,30));
+        timeButton.setBounds(new Rectangle(50,550,100,30));
+        submitButton.setBounds(new Rectangle(260,550,100,30));
         //添加组件到面板
         frame.add(panel);
         panel.add(label0);
@@ -128,7 +128,7 @@ public class calculateForm extends JFrame implements ActionListener {
         sp.setViewportView(qaPanel);
         qaPanel.revalidate();
         sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        sp.setBounds(50, 80, 550, 420);     //设置滚动面板大小及位置
+        sp.setBounds(50, 80, 550, 440);     //设置滚动面板大小及位置
         this.add(sp);
         frame.setVisible(true);
 
