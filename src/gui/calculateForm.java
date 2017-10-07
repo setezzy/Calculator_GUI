@@ -33,7 +33,6 @@ public class calculateForm extends JFrame implements ActionListener {
     private String wRead;
     private MyRunable myTimeRunable=new MyRunable();
     //创建各组件
-    JPanel panel = (JPanel)getContentPane();
     JLabel label0=new JLabel("题目:");
     JLabel label1=new JLabel("你的答案:");
     JLabel label2=new JLabel("正确答案:");
@@ -45,10 +44,11 @@ public class calculateForm extends JFrame implements ActionListener {
     JButton submitButton=new JButton("提交答案");
 
     public void placeComponent() throws Exception{
-        panel.setLayout(null);
-        frame.add(panel);
         frame.setSize(new Dimension(700,700));
         frame.setTitle("四则运算界面");
+        JPanel panel = (JPanel)getContentPane();
+        panel.setLayout(null);
+        frame.add(panel);
         //设置组件位置及大小
         label0.setBounds(new Rectangle(50,40,30,25));
         label1.setBounds(new Rectangle(320,40,60,25));
@@ -61,6 +61,7 @@ public class calculateForm extends JFrame implements ActionListener {
         timeButton.setBounds(new Rectangle(60,550,100,30));
         submitButton.setBounds(new Rectangle(280,550,100,30));
         //添加组件到面板
+        frame.add(panel);
         panel.add(label0);
         panel.add(label1);
         panel.add(label2);
@@ -89,7 +90,7 @@ public class calculateForm extends JFrame implements ActionListener {
         new Thread(myTimeRunable).start();
         //显示题目及作答区域
         JPanel qaPanel=new JPanel();
-        qaPanel.setLayout(new GridLayout(mainForm.num,1,2,0));  //行列数及间距
+        qaPanel.setLayout(new GridLayout(mainForm.num,1,4,0));  //行列数及间距
         for(int i=0;i<mainForm.num;i++){
             //每一条题目作为一个panel
             quesPanel[i]=new JPanel();
@@ -102,27 +103,33 @@ public class calculateForm extends JFrame implements ActionListener {
             quesLabel[i]=new JLabel(i+":"+ques[i],JLabel.LEFT);
             quesLabel[i].setFont(new Font("Consolas",0,14));
             quesPanel[i].add(quesLabel[i]);
-            quesLabel[i].setBounds(0,50,300,25);
+            quesLabel[i].setBounds(0,0,300,25);
             //作答区域
             ansField[i]=new JTextField(10);
             ansField[i].setFont(new Font("Consolas",0,14));
             quesPanel[i].add(ansField[i]);
-            ansField[i].setBounds(270,50,70,25);
+            ansField[i].setBounds(270,0,70,25);
             //判断区域
             checkLabel[i]=new JLabel("",JLabel.CENTER);
             quesPanel[i].add(checkLabel[i]);
-            checkLabel[i].setBounds(350,50,60,25);
+            checkLabel[i].setBounds(350,0,60,25);
             //正确答案显示域
             ansLabel[i]=new JLabel("",JLabel.LEFT);
             ansLabel[i].setFont(new java.awt.Font("Consolas",0,14));
             quesPanel[i].add(ansLabel[i]);
-            ansLabel[i].setBounds(450,50,100,25);
+            ansLabel[i].setBounds(450,0,100,25);
 
             qaPanel.add(quesPanel[i]);
 
         }
-        panel.add(qaPanel).setBounds(50,40,630,500);
-        frame.add(panel);
+        //添加滚动面板
+        qaPanel.setPreferredSize(new Dimension(600,mainForm.num*(25+4))); //设置面板宽高
+        JScrollPane sp=new JScrollPane();
+        sp.setViewportView(qaPanel);
+        qaPanel.revalidate();
+        sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        sp.setBounds(50, 80, 550, 420);     //设置滚动面板大小及位置
+        this.add(sp);
         frame.setVisible(true);
 
         //添加按钮监听事件
