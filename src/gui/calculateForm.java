@@ -20,13 +20,15 @@ public class calculateForm extends JFrame implements ActionListener {
     private static JFrame frame=new JFrame();
     private String[] ques=new String[mainForm.num];
     private String[] ans=new String[mainForm.num];
-    private JLabel[] quesLabel=new JLabel[mainForm.num];   //题目域
-    private JLabel[] checkLabel=new JLabel[mainForm.num];  //正误判断域
-    private JTextField[] ansField=new JTextField[mainForm.num];   //答案输入域
-    private JLabel[] ansLabel=new JLabel[mainForm.num];           //答案显示域
+    private JLabel[] quesLabel=new JLabel[mainForm.num];                    //题目域
+    private JLabel[] checkLabel=new JLabel[mainForm.num];                   //正误判断域
+    private JTextField[] ansField=new JTextField[mainForm.num];             //答案输入域
+    private JLabel[] ansLabel=new JLabel[mainForm.num];                     //答案显示域
     private JPanel[] quesPanel=new JPanel[mainForm.num];
     private int rightCount,wrongCount=0;
     private boolean isRun=false;
+    private boolean isNull=false;
+    private boolean illeagle=false;
     private BufferedWriter writer;
     private BufferedReader reader;
     private String rRead;
@@ -54,8 +56,8 @@ public class calculateForm extends JFrame implements ActionListener {
         label1.setBounds(new Rectangle(320,40,60,25));
         label2.setBounds(new Rectangle(500,40,60,25));
         label3.setBounds(new Rectangle(50,620,60,25));
-        rLabel.setBounds(new Rectangle(140,620,60,25));
-        wLabel.setBounds(new Rectangle(220, 620, 60, 25));
+        rLabel.setBounds(new Rectangle(140,620,80,25));
+        wLabel.setBounds(new Rectangle(230, 620, 80, 25));
         timeLabel.setBounds(new Rectangle(500,550,120,25));
         timeLabel.setFont(new java.awt.Font("Consolas",Font.BOLD,18));
         timeButton.setBounds(new Rectangle(50,550,100,30));
@@ -90,7 +92,7 @@ public class calculateForm extends JFrame implements ActionListener {
         new Thread(myTimeRunable).start();
         //显示题目及作答区域
         JPanel qaPanel=new JPanel();
-        qaPanel.setLayout(new GridLayout(mainForm.num,1,4,0));  //行列数及间距
+        qaPanel.setLayout(new GridLayout(mainForm.num,1,4,0));                  //行列数及间距
         for(int i=0;i<mainForm.num;i++){
             //每一条题目作为一个panel
             quesPanel[i]=new JPanel();
@@ -123,16 +125,16 @@ public class calculateForm extends JFrame implements ActionListener {
 
         }
         //添加滚动面板
-        qaPanel.setPreferredSize(new Dimension(600,mainForm.num*(25+4))); //设置面板宽高
+        qaPanel.setPreferredSize(new Dimension(600,mainForm.num*(25+4)));   //设置面板宽高
         JScrollPane sp=new JScrollPane();
         sp.setViewportView(qaPanel);
         qaPanel.revalidate();
         sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        sp.setBounds(50, 80, 550, 440);     //设置滚动面板大小及位置
+        sp.setBounds(50, 80, 550, 440);                                    //设置滚动面板大小及位置
         this.add(sp);
         frame.setVisible(true);
 
-        //添加按钮监听事件
+        /*----------------添加按钮监听事件------------------*/
         //开始计时
         timeButton.addActionListener(new ActionListener() {
             @Override
@@ -147,11 +149,21 @@ public class calculateForm extends JFrame implements ActionListener {
                 isRun=false;
                 for(int i=0;i<mainForm.num;i++){
                     ans[i] = Simplify.gcd(NewCalculate.newcalculate(ques[i]));
-                    if (ansField[i].getText().equals("")) {      //题目未答完
+                    //题目未答完时出错
+                    if (ansField[i].getText().equals("")) {
                         JOptionPane.showMessageDialog(null, "请输入第" + i + "题答案", "出错啦", JOptionPane.ERROR_MESSAGE);
+                        isNull=true;
                         break;
                     }
-                    else{     //显示判断结果
+                    //输入包含其他字符时出错
+                    else if(!ansField[i].getText().matches("^[0-9/]+$")){
+                        ansField[i].setText(null);
+                        JOptionPane.showMessageDialog(null, "请重新输入第" + i + "题答案", "出错啦", JOptionPane.ERROR_MESSAGE);
+                        illeagle=true;
+                        break;
+                    }
+                    //显示判断结果
+                    else{
                         if(ansField[i].getText().equals(ans[i])) {
                                 checkLabel[i].setText("正确");
                                 ansLabel[i].setText(":)");
@@ -167,15 +179,16 @@ public class calculateForm extends JFrame implements ActionListener {
                 int ratio=rightCount*100/(rightCount+wrongCount);
                 String[] a=timeLabel.getText().split(":");
                 int cost=Integer.parseInt(a[1])*60+Integer.parseInt(a[2]);
-                //消息框显示最终用时及正确率
-                JOptionPane.showMessageDialog(null,"用时:"+cost+"秒\n"+"正确率:"+ratio+"%");
+               if(!isNull&&!illeagle){
+                    JOptionPane.showMessageDialog(null, "用时:" + cost + "秒\n" + "正确率:" + ratio + "%");   //消息框显示最终用时及正确率
+                }
                 //写入对错数
                 rightCount=rightCount+Integer.parseInt(rRead);
                 wrongCount=wrongCount+Integer.parseInt(wRead);
                 Integer right=new Integer(rightCount);
                 Integer wrong=new Integer(wrongCount);
                 try {
-                    URL url=calculateForm.class.getResource("history.txt");
+                    URL url=calculateForm.class.getResource("/main/resources/history.txt");
                     File file2 = new File(url.toURI());
                     writer = new BufferedWriter(new FileWriter(file2));
                     writer.write(right.toString());
@@ -196,7 +209,7 @@ public class calculateForm extends JFrame implements ActionListener {
         private int hour = 0;
         private int min = 0;
         private int sec = 0;
-        private NumberFormat format = NumberFormat.getInstance();  //将数字格式化处理
+        private NumberFormat format = NumberFormat.getInstance();      //将数字格式化处理
         private String getTime(){
             ++sec;
             if(sec == 60) {
@@ -222,7 +235,7 @@ public class calculateForm extends JFrame implements ActionListener {
             format.setGroupingUsed(false);
             while(true) {
                 if(rootPaneCheckingEnabled) {
-                    if(isRun) {   //若点击计时按钮
+                    if(isRun) {                                      //若点击计时按钮
                         getTime();
                         timeLabel.setText(showTime());
                     }
@@ -238,10 +251,8 @@ public class calculateForm extends JFrame implements ActionListener {
     /*--------------------历史读取功能-----------------*/
     public void ReadHistory() throws URISyntaxException {
         try{
-            //读取对错数目
-            URL url=calculateForm.class.getResource("history.txt");
-            File file1=new File(url.toURI());
-            reader=new BufferedReader(new FileReader(file1));
+            InputStream is=this.getClass().getResourceAsStream("/main/resources/history.txt");
+            reader=new BufferedReader(new InputStreamReader(is));
             rRead=reader.readLine();
             wRead=reader.readLine();
             reader.close();
@@ -253,7 +264,7 @@ public class calculateForm extends JFrame implements ActionListener {
             wRead="0";
         }
         rLabel.setText("正确量:"+rRead);
-        wLabel.setText("错误量"+wRead);
+        wLabel.setText("错误量:"+wRead);
     }
 
     public void actionPerformed(ActionEvent e){
