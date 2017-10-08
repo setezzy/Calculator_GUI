@@ -14,6 +14,11 @@ import java.net.URISyntaxException;
  */
 public class mainForm extends JFrame implements ActionListener{
     public static int num;
+    //初始化语言为简体中文
+    public static final int SIMPLIFIED_CHINESE = 1;
+    public static final int TRADITIONAL_CHINESE = 2;
+    public static final int ENGLISH= 3;
+    public static  int languageEdition=SIMPLIFIED_CHINESE;
     private static JFrame frame=new JFrame();
     //创建各组件
     JMenuBar menuBar=new JMenuBar();//菜单条
@@ -58,13 +63,13 @@ public class mainForm extends JFrame implements ActionListener{
         panel.setLayout(null);
         frame.add(panel);
         //设置界面大小
-        frame.setSize(new Dimension(500, 450));
+        frame.setSize(new Dimension(700, 450));
         frame.setTitle("开始界面");
         //设置组件大小
         inputLabel.setFont(new java.awt.Font("微软雅黑", Font.BOLD, 18));
-        inputLabel.setBounds(new Rectangle(50, 90, 180, 30));
-        inputField.setBounds(new Rectangle(220, 90, 180, 30));
-        startButton.setBounds(new Rectangle(160, 200, 160, 30));
+        inputLabel.setBounds(new Rectangle(200, 60, 400, 30));
+        inputField.setBounds(new Rectangle(200, 120, 180, 30));
+        startButton.setBounds(new Rectangle(210, 200, 160, 30));
         //将组件加入到panel
         frame.setJMenuBar(menuBar);
         this.add(inputLabel);
@@ -90,28 +95,69 @@ public class mainForm extends JFrame implements ActionListener{
 
     public void actionPerformed(ActionEvent e){
         if(e.getSource()==item0){
+
             System.exit(0);
         }
-        /*
+        if (e.getSource()==item1){
+            languageEdition=SIMPLIFIED_CHINESE;
+            frame.setTitle("开始界面");
+            menu0.setText("系统");
+            item0.setText("退出");
+            menu1.setText("显示");
+            menu2.setText("帮助");
+            item4.setText("使用说明");
+            inputLabel.setText("请输入题目数量：");
+            startButton.setText("开始做题");
+        }
+
         if(e.getSource()==item2){          //切换到繁体界面
-            mainForm2 f2=new mainForm2();
-            frame.remove(this.getRootPane());
-            frame.dispose();
-            f2.setVisible(true);
+            languageEdition=TRADITIONAL_CHINESE;
+            frame.setTitle("開始界面");
+            menu0.setText("系統");
+            item0.setText("退出");
+            menu1.setText("顯示");
+            menu2.setText("幫助");
+            item4.setText("使用說明");
+            inputLabel.setText("請輸入題目數量：");
+            startButton.setText("開始做題");
+
         }
         if(e.getSource()==item3){           //切换到英文界面
-            mainForm3 f3=new mainForm3();
-            frame.remove(this.getRootPane());
-            frame.dispose();
-            f3.setVisible(true);
+            languageEdition=ENGLISH;
+            frame.setTitle("Start Interface");
+            menu0.setText("system");
+            item0.setText("quit");
+            menu1.setText("show");
+            menu2.setText("help");
+            item4.setText("using instruction");
+            inputLabel.setText("Please input the number of questions:");
+            startButton.setText("start to do it");
+
         }
-        */
+
         if(e.getSource()==item4){
-            JOptionPane.showMessageDialog(null,"系统-->退出\n显示-->多语言切换\n在主界面输入你想要做的题目数量，点击开始按钮开始做题");
+            if (languageEdition==TRADITIONAL_CHINESE){
+                JOptionPane.showMessageDialog(null,"系統-->退出\n顯示-->多語言切換\n在主界面輸入妳想要做的題目數量，點擊開始按鈕開始做題");
+            }
+            else if (languageEdition==ENGLISH){
+                JOptionPane.showMessageDialog(null,"system-->quit\nshow-->lannguage change\nplease input the number of Questions and click the start button");
+            }
+            else {
+                JOptionPane.showMessageDialog(null,"系统-->退出\n显示-->多语言切换\n在主界面输入你想要做的题目数量，点击开始按钮开始做题");
+            }
+
         }
         if(e.getSource()==startButton){         //切换到题目界面
             if(inputField.getText().equals("")) {
-                JOptionPane.showMessageDialog(null,"请输入数字！","出错啦",JOptionPane.ERROR_MESSAGE);
+                if (languageEdition==TRADITIONAL_CHINESE){
+                    JOptionPane.showMessageDialog(null,"請輸入數字！","出錯啦",JOptionPane.ERROR_MESSAGE);
+                }
+                else if (languageEdition==ENGLISH){
+                    JOptionPane.showMessageDialog(null,"Please input the number！","It's Wrong",JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null,"请输入数字！","出错啦",JOptionPane.ERROR_MESSAGE);
+                }
             }
             else{
                 num=Integer.parseInt(inputField.getText());

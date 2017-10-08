@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.PublicKey;
 import java.text.NumberFormat;
 
 /**
@@ -18,49 +19,75 @@ import java.text.NumberFormat;
  */
 public class calculateForm extends JFrame implements ActionListener {
     private static JFrame frame=new JFrame();
+    //获取语言类型
+    public static final int SIMPLIFIED_CHINESE = 1;//简体中文
+    public static final int TRADITIONAL_CHINESE = 2;//繁体中文
+    public static final int ENGLISH= 3;//英文
+    public   int language=mainForm.languageEdition;
+    public static  final int SHOW_QUESTION=1;
+    public static final int USER_ANSWER=2;
+    public static final int SYSTEM_ANSWER=3;
+    public static final int START_CLOCKING=4;
+    public static final int SUBMIT=5;
+    public static final int HISTORICAL_RECORD=6;
+    public static final int CORRECT_QUANTITY=7;
+    public static final int ERROR_QUANTITY=8;
+    public static final int ELAPSED_TIME=9;
+    public static final int CORRECT_RATE=10;
+    public static final int CORRECT=11;
+    public static final int WRONG=12;
+    public static final int OPERATION_PANEL=13;
+    public static final int WAITING_FOR_INPUT=14;
+    public static final int QUESTION_NUMBER=15;
+
+
+
     private String[] ques=new String[mainForm.num];
     private String[] ans=new String[mainForm.num];
-    private JLabel[] quesLabel=new JLabel[mainForm.num];                    //题目域
-    private JLabel[] checkLabel=new JLabel[mainForm.num];                   //正误判断域
-    private JTextField[] ansField=new JTextField[mainForm.num];             //答案输入域
-    private JLabel[] ansLabel=new JLabel[mainForm.num];                     //答案显示域
+    private JLabel[] quesLabel=new JLabel[mainForm.num];   //题目域
+    private JLabel[] checkLabel=new JLabel[mainForm.num];  //正误判断域
+    private JTextField[] ansField=new JTextField[mainForm.num];   //答案输入域
+    private JLabel[] ansLabel=new JLabel[mainForm.num];           //答案显示域
     private JPanel[] quesPanel=new JPanel[mainForm.num];
     private int rightCount,wrongCount=0;
     private boolean isRun=false;
-    private boolean isNull=false;
-    private boolean illeagle=false;
     private BufferedWriter writer;
     private BufferedReader reader;
     private String rRead;
     private String wRead;
     private MyRunable myTimeRunable=new MyRunable();
+
+
+
     //创建各组件
-    JLabel label0=new JLabel("题目:");
-    JLabel label1=new JLabel("你的答案:");
-    JLabel label2=new JLabel("正确答案:");
-    JLabel label3=new JLabel("历史记录:");
-    JLabel rLabel=new JLabel("正确量:0");
-    JLabel wLabel=new JLabel("错误量:0");
+    //JLabel label0=new JLabel("题目:");
+    JLabel label0=new JLabel( readTxtLine(language,SHOW_QUESTION));
+
+    JLabel label1=new JLabel(readTxtLine(language,USER_ANSWER));
+    JLabel label2=new JLabel(readTxtLine(language,SYSTEM_ANSWER));
+    JLabel label3=new JLabel(readTxtLine(language,HISTORICAL_RECORD));
+    JLabel rLabel=new JLabel(readTxtLine(language,CORRECT_QUANTITY));
+    JLabel wLabel=new JLabel(readTxtLine(language,ERROR_QUANTITY));
     JLabel timeLabel=new JLabel("00:00:00");
-    JButton timeButton=new JButton("开始计时");
-    JButton submitButton=new JButton("提交答案");
+    JButton timeButton=new JButton(readTxtLine(language,START_CLOCKING));
+    JButton submitButton=new JButton(readTxtLine(language,SUBMIT));
 
     public void placeComponent() throws Exception{
         frame.setSize(new Dimension(700,700));
-        frame.setTitle("四则运算界面");
+        frame.setTitle(readTxtLine(language,OPERATION_PANEL));
         JPanel panel = (JPanel)getContentPane();
         panel.setLayout(null);
         frame.add(panel);
         //设置组件位置及大小
-        label0.setBounds(new Rectangle(50,40,60,25));
-        label1.setBounds(new Rectangle(320,40,60,25));
-        label2.setBounds(new Rectangle(500,40,60,25));
-        label3.setBounds(new Rectangle(50,620,60,25));
-        rLabel.setBounds(new Rectangle(140,620,80,25));
-        wLabel.setBounds(new Rectangle(230, 620, 80, 25));
+        label0.setBounds(new Rectangle(50,40,100,25));
+        label1.setBounds(new Rectangle(320,40,100,25));
+        label2.setBounds(new Rectangle(500,40,100,25));
+        label3.setBounds(new Rectangle(50,620,140,25));
+        rLabel.setBounds(new Rectangle(200,620,120,25));
+        wLabel.setBounds(new Rectangle(340, 620, 120, 25));
         timeLabel.setBounds(new Rectangle(500,550,120,25));
         timeLabel.setFont(new java.awt.Font("Consolas",Font.BOLD,18));
-        timeButton.setBounds(new Rectangle(50,550,100,30));
+        timeButton.setBounds(new Rectangle(50,550,150,30));
         submitButton.setBounds(new Rectangle(260,550,100,30));
         //添加组件到面板
         frame.add(panel);
@@ -92,7 +119,7 @@ public class calculateForm extends JFrame implements ActionListener {
         new Thread(myTimeRunable).start();
         //显示题目及作答区域
         JPanel qaPanel=new JPanel();
-        qaPanel.setLayout(new GridLayout(mainForm.num,1,4,0));                  //行列数及间距
+        qaPanel.setLayout(new GridLayout(mainForm.num,1,4,0));  //行列数及间距
         for(int i=0;i<mainForm.num;i++){
             //每一条题目作为一个panel
             quesPanel[i]=new JPanel();
@@ -125,16 +152,16 @@ public class calculateForm extends JFrame implements ActionListener {
 
         }
         //添加滚动面板
-        qaPanel.setPreferredSize(new Dimension(600,mainForm.num*(25+4)));   //设置面板宽高
+        qaPanel.setPreferredSize(new Dimension(600,mainForm.num*(25+4))); //设置面板宽高
         JScrollPane sp=new JScrollPane();
         sp.setViewportView(qaPanel);
         qaPanel.revalidate();
         sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        sp.setBounds(50, 80, 550, 440);                                    //设置滚动面板大小及位置
+        sp.setBounds(50, 80, 550, 440);     //设置滚动面板大小及位置
         this.add(sp);
         frame.setVisible(true);
 
-        /*----------------添加按钮监听事件------------------*/
+        //添加按钮监听事件
         //开始计时
         timeButton.addActionListener(new ActionListener() {
             @Override
@@ -149,28 +176,18 @@ public class calculateForm extends JFrame implements ActionListener {
                 isRun=false;
                 for(int i=0;i<mainForm.num;i++){
                     ans[i] = Simplify.gcd(NewCalculate.newcalculate(ques[i]));
-                    //题目未答完时出错
-                    if (ansField[i].getText().equals("")) {
-                        JOptionPane.showMessageDialog(null, "请输入第" + i + "题答案", "出错啦", JOptionPane.ERROR_MESSAGE);
-                        isNull=true;
+                    if (ansField[i].getText().equals("")) {      //题目未答完
+                        JOptionPane.showMessageDialog(null, readTxtLine(language,WAITING_FOR_INPUT) + i + readTxtLine(language,QUESTION_NUMBER), readTxtLine(language,WRONG), JOptionPane.ERROR_MESSAGE);
                         break;
                     }
-                    //输入包含其他字符时出错
-                    else if(!ansField[i].getText().matches("^[0-9/]+$")){
-                        ansField[i].setText(null);
-                        JOptionPane.showMessageDialog(null, "请重新输入第" + i + "题答案", "出错啦", JOptionPane.ERROR_MESSAGE);
-                        illeagle=true;
-                        break;
-                    }
-                    //显示判断结果
-                    else{
+                    else{     //显示判断结果
                         if(ansField[i].getText().equals(ans[i])) {
-                                checkLabel[i].setText("正确");
+                                checkLabel[i].setText(readTxtLine(language,CORRECT));
                                 ansLabel[i].setText(":)");
                                 rightCount++;
                             }
                         else{
-                                checkLabel[i].setText("错误");
+                                checkLabel[i].setText(readTxtLine(language,WRONG));
                                 ansLabel[i].setText(ans[i]);
                                 wrongCount++;
                             }
@@ -179,9 +196,8 @@ public class calculateForm extends JFrame implements ActionListener {
                 int ratio=rightCount*100/(rightCount+wrongCount);
                 String[] a=timeLabel.getText().split(":");
                 int cost=Integer.parseInt(a[1])*60+Integer.parseInt(a[2]);
-               if(!isNull&&!illeagle){
-                    JOptionPane.showMessageDialog(null, "用时:" + cost + "秒\n" + "正确率:" + ratio + "%");   //消息框显示最终用时及正确率
-                }
+                //消息框显示最终用时及正确率
+                JOptionPane.showMessageDialog(null,readTxtLine(language,ELAPSED_TIME)+cost+"s\n"+readTxtLine(language,CORRECT_RATE)+ratio+"%");
                 //写入对错数
                 rightCount=rightCount+Integer.parseInt(rRead);
                 wrongCount=wrongCount+Integer.parseInt(wRead);
@@ -209,7 +225,7 @@ public class calculateForm extends JFrame implements ActionListener {
         private int hour = 0;
         private int min = 0;
         private int sec = 0;
-        private NumberFormat format = NumberFormat.getInstance();      //将数字格式化处理
+        private NumberFormat format = NumberFormat.getInstance();  //将数字格式化处理
         private String getTime(){
             ++sec;
             if(sec == 60) {
@@ -235,7 +251,7 @@ public class calculateForm extends JFrame implements ActionListener {
             format.setGroupingUsed(false);
             while(true) {
                 if(rootPaneCheckingEnabled) {
-                    if(isRun) {                                      //若点击计时按钮
+                    if(isRun) {   //若点击计时按钮
                         getTime();
                         timeLabel.setText(showTime());
                     }
@@ -263,8 +279,44 @@ public class calculateForm extends JFrame implements ActionListener {
             rRead="0";
             wRead="0";
         }
-        rLabel.setText("正确量:"+rRead);
-        wLabel.setText("错误量:"+wRead);
+        rLabel.setText(readTxtLine(language,CORRECT_QUANTITY)+rRead);
+        wLabel.setText(readTxtLine(language,ERROR_QUANTITY)+wRead);
+    }
+
+    /**
+     * add by wtt 2017/10/8
+     * 按行读取txt文档中的数据
+     * @param language
+     * @param lineNo
+     * @return
+     */
+    public static String readTxtLine(int language, int lineNo) {
+
+        String txtPath;
+        if (language==TRADITIONAL_CHINESE){
+            txtPath="src/language/traditional.txt";
+        } else if (language==ENGLISH) {
+            txtPath="src/language/english.txt";
+        }
+        else txtPath="src/language/simplified.txt"    ;
+        String line = "";
+        String encoding="UTF-8";
+        try {
+            File txtFile = new File(txtPath);
+            InputStream in = new FileInputStream(txtFile);
+            InputStreamReader read = new InputStreamReader(in,encoding);
+            BufferedReader reader = new BufferedReader(read);
+            int i = 0;
+            while (i < lineNo) {
+                line = reader.readLine();
+                i++;
+            }
+            reader.close();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return line;
     }
 
     public void actionPerformed(ActionEvent e){
