@@ -25,5 +25,11 @@
 3.	异常捕获后进行日志记录或异常继续抛出
 4.	函数对错误的处理恰当
 5.	将重复代码 抽象成私有函数
+六、  Java编码其它约定
+1.使用StringBuffer 对象：在处理String 的时候要尽量使用StringBuffer 类， StringBuffer 类是构成String 类的基础。String 类将StringBuffer 类封装了起
+来，（以花费更多时间为代价）为开发人员提供了一个安全的接口。
+2. 避免太多的使用 synchronized 关键字：避免不必要的使用关键字 synchronized，应该在必要的时候再使用它，这是一个避免死锁的好方法。必须使用时，也尽量控制范 围，最好在块级控制。
+3. 避免使用java.util.Vector 类：因为Vector 是is synchronized.\，所以使用 java.util.Vector 类在性能上会有所减低。 
+4. 尽量使用接口而不是一个具体的类
 
 to be continued
