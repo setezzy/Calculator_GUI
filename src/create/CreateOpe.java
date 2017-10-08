@@ -4,7 +4,7 @@ package create;
  * Created by Zhiyi Zhang on 2017/9/21.
  */
 public class CreateOpe {
-    char[] op=new char[10];
+    char[] op=new char[20];
     void ope(int count){  //定义生成运算符数量
         int i=0;
         for(int j=0;j<count;j++){
