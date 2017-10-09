@@ -9,9 +9,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Zhiyi Zhang on 2017/9/28.
@@ -39,10 +42,13 @@ public class calculateForm extends JFrame implements ActionListener {
     public static final int WAITING_FOR_INPUT=14;
     public static final int QUESTION_NUMBER=15;
     public static final int OUTPUTQS=16;
+    public static final int CORRECT_EXPORT=17;
+    public static final int WRONG_EXPORT=18;
 
     //定义各组件
     private String[] ques=new String[mainForm.num];
     private String[] ans=new String[mainForm.num];
+    private String[] wrongQues=new String[mainForm.num];
     private JLabel[] quesLabel=new JLabel[mainForm.num];          //题目域
     private JLabel[] checkLabel=new JLabel[mainForm.num];         //正误判断域
     private JTextField[] ansField=new JTextField[mainForm.num];   //答案输入域
@@ -50,10 +56,7 @@ public class calculateForm extends JFrame implements ActionListener {
     private JPanel[] quesPanel=new JPanel[mainForm.num];
     private int rightCount,wrongCount=0;
     private boolean isRun=false;
-    private boolean isNull=false;
-    private boolean illeagle=false;
     private BufferedWriter writer;
-    private BufferedWriter writerOutQs;
     private BufferedReader reader;
     private String rRead;
     private String wRead;
@@ -62,9 +65,7 @@ public class calculateForm extends JFrame implements ActionListener {
 
 
     //创建各组件
-    //JLabel label0=new JLabel("题目:");
     JLabel label0=new JLabel( readTxtLine(language,SHOW_QUESTION));
-
     JLabel label1=new JLabel(readTxtLine(language,USER_ANSWER));
     JLabel label2=new JLabel(readTxtLine(language,SYSTEM_ANSWER));
     JLabel label3=new JLabel(readTxtLine(language,HISTORICAL_RECORD));
@@ -92,7 +93,7 @@ public class calculateForm extends JFrame implements ActionListener {
         timeLabel.setBounds(new Rectangle(500,550,120,25));
         timeLabel.setFont(new java.awt.Font("Consolas",Font.BOLD,18));
         timeButton.setBounds(new Rectangle(50,550,150,30));
-        submitButton.setBounds(new Rectangle(260,550,100,30));
+        submitButton.setBounds(new Rectangle(240,550,100,30));
         outQsButton.setBounds(380,550,100,30);
 
         //添加组件到面板
@@ -178,24 +179,25 @@ public class calculateForm extends JFrame implements ActionListener {
                 isRun=true;
             }
         });
+
         //提交答案
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 isRun=false;
-                for(int i=0;i<mainForm.num;i++){
+                int j=0;
+                int i;
+                for(i=0;i<mainForm.num;i++){
                     ans[i] = Simplify.gcd(NewCalculate.newcalculate(ques[i]));
                     if (ansField[i].getText().equals("")) {
                     //题目未答完时出错
                         JOptionPane.showMessageDialog(null, readTxtLine(language,WAITING_FOR_INPUT) + i + readTxtLine(language,QUESTION_NUMBER), readTxtLine(language,WRONG), JOptionPane.ERROR_MESSAGE);
-                        isNull=true;
                         break;
                     }
                     //输入包含其他字符时出错
                     else if(!ansField[i].getText().matches("^[0-9/]+$")){
                         ansField[i].setText(null);
-                        JOptionPane.showMessageDialog(null, "请重新输入第" + i + "题答案", "出错啦", JOptionPane.ERROR_MESSAGE);
-                        illeagle=true;
+                        JOptionPane.showMessageDialog(null, readTxtLine(language,WAITING_FOR_INPUT) + i + readTxtLine(language,QUESTION_NUMBER), readTxtLine(language,WRONG), JOptionPane.ERROR_MESSAGE);
                         break;
                         }
                     //显示判断结果
@@ -209,6 +211,8 @@ public class calculateForm extends JFrame implements ActionListener {
                                 checkLabel[i].setText(readTxtLine(language,WRONG));
                                 ansLabel[i].setText(ans[i]);
                                 wrongCount++;
+                                wrongQues[j]=ques[i];
+                                j++;
                             }
                     }
                 }
@@ -216,7 +220,7 @@ public class calculateForm extends JFrame implements ActionListener {
                 String[] a=timeLabel.getText().split(":");
                 int cost=Integer.parseInt(a[1])*60+Integer.parseInt(a[2]);
                 //消息框显示最终用时及正确率
-                if(!isNull&&!illeagle) {
+                if(i==mainForm.num) {
                     JOptionPane.showMessageDialog(null, readTxtLine(language, ELAPSED_TIME) + cost + "s\n" + readTxtLine(language, CORRECT_RATE) + ratio + "%");
                 }
                 //写入对错数
@@ -225,41 +229,50 @@ public class calculateForm extends JFrame implements ActionListener {
                 Integer right=new Integer(rightCount);
                 Integer wrong=new Integer(wrongCount);
                 try {
-                    URL url=calculateForm.class.getResource("/main/resources/history.txt");
-                    File file2 = new File(url.toURI());
-                    writer = new BufferedWriter(new FileWriter(file2));
+                   // URL url=this.getClass().getResource("/main/resources/history.txt");
+                   // File file2 = new File(url.toURI());
+                    String root=System.getProperty("user.dir");
+                    String path=root+"//historyCount.txt";
+                    File file=new File(path);
+                    writer = new BufferedWriter(new FileWriter(file));
                     writer.write(right.toString());
                     writer.newLine();
                     writer.write(wrong.toString());
                     writer.close();
                 }catch (IOException ie){
                     ie.printStackTrace();
-                } catch (URISyntaxException e1) {
-                    e1.printStackTrace();
                 }
             }
         });
-        //导出题目
+
+        //导出错误题目
         outQsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                isRun=true;
+                String root=System.getProperty("user.dir");
+                String path=root+"//wrongQues.txt";
+                File file=new File(path);
                 try {
-                    URL urlOutQs=calculateForm.class.getResource("/main/resources/outputQs");
-                    File outfile=new File(urlOutQs.toURI());
-                    writerOutQs=new BufferedWriter(new FileWriter(outfile));
-                    String question=new String();
-                    for (int i=0;i<mainForm.num;i++)
-                    {
-                        writerOutQs.write(quesLabel[i].getText());
-                        writerOutQs.newLine();
+                    OutputStream os=new FileOutputStream(file,true);
+                    SimpleDateFormat date=new SimpleDateFormat("yyyy-MM-dd HH:MM:SS");
+                    os.write('\r');
+                    os.write('\n');
+                    os.write(('['+date.format(new Date())+']').getBytes());
+                    os.write('\r');
+                    os.write('\n');
+                    for(int i=0;i<wrongQues.length;i++){
+                        os.write(wrongQues[i].getBytes());
+                        os.write('\r');
+                        os.write('\n');
                     }
-                    writerOutQs.close();
-                }catch (IOException ie){
-                    ie.printStackTrace();
-                } catch (URISyntaxException e1) {
-                    e1.printStackTrace();
+                    os.close();
+                    JOptionPane.showMessageDialog(null,readTxtLine(language,CORRECT_EXPORT));
+                } catch (FileNotFoundException e1) {
+                    JOptionPane.showMessageDialog(null,readTxtLine(language,WRONG_EXPORT));
+                } catch (IOException e1) {
+                    JOptionPane.showMessageDialog(null,readTxtLine(language,WRONG_EXPORT));
                 }
+
             }
         });
 
@@ -298,7 +311,7 @@ public class calculateForm extends JFrame implements ActionListener {
             format.setGroupingUsed(false);
             while(true) {
                 if(rootPaneCheckingEnabled) {
-                    if(isRun) {   //若点击计时按钮
+                    if(isRun) {                                 //若点击计时按钮
                         getTime();
                         timeLabel.setText(showTime());
                     }
@@ -316,8 +329,12 @@ public class calculateForm extends JFrame implements ActionListener {
     */
     public void ReadHistory() throws URISyntaxException {
         try{
-            InputStream is=this.getClass().getResourceAsStream("/main/resources/history.txt");
-            reader=new BufferedReader(new InputStreamReader(is));
+            //InputStream is=this.getClass().getResourceAsStream("/main/resources/history.txt");
+            //reader=new BufferedReader(new InputStreamReader(is));
+            String root=System.getProperty("user.dir");
+            String path=root+"//historyCount.txt";
+            File file2=new File(path);
+            reader = new BufferedReader(new FileReader(file2));
             rRead=reader.readLine();
             wRead=reader.readLine();
             reader.close();
@@ -339,33 +356,30 @@ public class calculateForm extends JFrame implements ActionListener {
      * @param lineNo
      * @return
      */
-    public static String readTxtLine(int language, int lineNo) {
-
+    public String readTxtLine(int language, int lineNo) {
         String txtPath;
         if (language==TRADITIONAL_CHINESE){
-            txtPath="src/language/traditional.txt";
-        } else if (language==ENGLISH) {
-            txtPath="src/language/english.txt";
-        }
-        else txtPath="src/language/simplified.txt" ;
+            txtPath="/main/resources/traditional.txt";
+            }
+        else if (language==ENGLISH) {
+           txtPath="/main/resources/english.txt";
+           }
+        else txtPath="/main/resources/simplified.txt"    ;
         String line = "";
         String encoding="UTF-8";
         try {
-            File txtFile = new File(txtPath);
-            InputStream in = new FileInputStream(txtFile);
-            InputStreamReader read = new InputStreamReader(in,encoding);
-            BufferedReader reader = new BufferedReader(read);
+            InputStream is=this.getClass().getResourceAsStream(txtPath);
+            reader=new BufferedReader(new InputStreamReader(is,encoding));
             int i = 0;
             while (i < lineNo) {
                 line = reader.readLine();
                 i++;
             }
-            reader.close();
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-
-        return line;
+           reader.close();
+           } catch (Exception e) {
+           // TODO: handle exception
+          }
+           return line;
     }
 
     public void actionPerformed(ActionEvent e){
