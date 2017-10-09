@@ -38,6 +38,7 @@ public class calculateForm extends JFrame implements ActionListener {
     public static final int OPERATION_PANEL=13;
     public static final int WAITING_FOR_INPUT=14;
     public static final int QUESTION_NUMBER=15;
+    public static final int OUTPUTQS=16;
 
     //定义各组件
     private String[] ques=new String[mainForm.num];
@@ -52,6 +53,7 @@ public class calculateForm extends JFrame implements ActionListener {
     private boolean isNull=false;
     private boolean illeagle=false;
     private BufferedWriter writer;
+    private BufferedWriter writerOutQs;
     private BufferedReader reader;
     private String rRead;
     private String wRead;
@@ -71,6 +73,7 @@ public class calculateForm extends JFrame implements ActionListener {
     JLabel timeLabel=new JLabel("00:00:00");
     JButton timeButton=new JButton(readTxtLine(language,START_CLOCKING));
     JButton submitButton=new JButton(readTxtLine(language,SUBMIT));
+    JButton outQsButton=new JButton(readTxtLine(language,OUTPUTQS));
 
     public void placeComponent() throws Exception{
         frame.setSize(new Dimension(700,700));
@@ -90,6 +93,8 @@ public class calculateForm extends JFrame implements ActionListener {
         timeLabel.setFont(new java.awt.Font("Consolas",Font.BOLD,18));
         timeButton.setBounds(new Rectangle(50,550,150,30));
         submitButton.setBounds(new Rectangle(260,550,100,30));
+        outQsButton.setBounds(380,550,100,30);
+
         //添加组件到面板
         frame.add(panel);
         panel.add(label0);
@@ -101,6 +106,7 @@ public class calculateForm extends JFrame implements ActionListener {
         panel.add(timeLabel);
         panel.add(timeButton);
         panel.add(submitButton);
+        panel.add(outQsButton);
     }
 
     public calculateForm() throws URISyntaxException {
@@ -233,6 +239,30 @@ public class calculateForm extends JFrame implements ActionListener {
                 }
             }
         });
+        //导出题目
+        outQsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isRun=true;
+                try {
+                    URL urlOutQs=calculateForm.class.getResource("/main/resources/outputQs");
+                    File outfile=new File(urlOutQs.toURI());
+                    writerOutQs=new BufferedWriter(new FileWriter(outfile));
+                    String question=new String();
+                    for (int i=0;i<mainForm.num;i++)
+                    {
+                        writerOutQs.write(quesLabel[i].getText());
+                        writerOutQs.newLine();
+                    }
+                    writerOutQs.close();
+                }catch (IOException ie){
+                    ie.printStackTrace();
+                } catch (URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
     }
 
     /*
