@@ -11,6 +11,8 @@ Correct rate:
 Correct
 Wrong
 Four arithmetic operations
-Please input the answer of
+Please input the answer of N0.
 Question
-Output the Qs
+Export
+Already exported
+Failed
