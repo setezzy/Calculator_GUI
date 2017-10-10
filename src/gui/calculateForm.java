@@ -9,9 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,6 +42,7 @@ public class calculateForm extends JFrame implements ActionListener {
     public static final int OUTPUTQS=16;
     public static final int CORRECT_EXPORT=17;
     public static final int WRONG_EXPORT=18;
+    public static final int OVER_TIME=19;
 
     //定义各组件
     private String[] ques=new String[mainForm.num];
@@ -56,6 +55,7 @@ public class calculateForm extends JFrame implements ActionListener {
     private JPanel[] quesPanel=new JPanel[mainForm.num];
     private int rightCount,wrongCount=0;
     private boolean isRun=false;
+    private boolean showDialog=true;
     private BufferedWriter writer;
     private BufferedReader reader;
     private String rRead;
@@ -191,13 +191,15 @@ public class calculateForm extends JFrame implements ActionListener {
                     ans[i] = Simplify.gcd(NewCalculate.newcalculate(ques[i]));
                     if (ansField[i].getText().equals("")) {
                     //题目未答完时出错
-                        JOptionPane.showMessageDialog(null, readTxtLine(language,WAITING_FOR_INPUT) + i + readTxtLine(language,QUESTION_NUMBER), readTxtLine(language,WRONG), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, readTxtLine(language,WAITING_FOR_INPUT) + i + readTxtLine(language,QUESTION_NUMBER),
+                        readTxtLine(language,WRONG), JOptionPane.ERROR_MESSAGE);
                         break;
                     }
                     //输入包含其他字符时出错
                     else if(!ansField[i].getText().matches("^[0-9/]+$")){
                         ansField[i].setText(null);
-                        JOptionPane.showMessageDialog(null, readTxtLine(language,WAITING_FOR_INPUT) + i + readTxtLine(language,QUESTION_NUMBER), readTxtLine(language,WRONG), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, readTxtLine(language,WAITING_FOR_INPUT) + i + readTxtLine(language,QUESTION_NUMBER),
+                        readTxtLine(language,WRONG), JOptionPane.ERROR_MESSAGE);
                         break;
                         }
                     //显示判断结果
@@ -216,6 +218,7 @@ public class calculateForm extends JFrame implements ActionListener {
                             }
                     }
                 }
+
                 int ratio=rightCount*100/(rightCount+wrongCount);
                 String[] a=timeLabel.getText().split(":");
                 int cost=Integer.parseInt(a[1])*60+Integer.parseInt(a[2]);
@@ -311,9 +314,22 @@ public class calculateForm extends JFrame implements ActionListener {
             format.setGroupingUsed(false);
             while(true) {
                 if(rootPaneCheckingEnabled) {
-                    if(isRun) {                                 //若点击计时按钮
+                    if(isRun) {
                         getTime();
                         timeLabel.setText(showTime());
+                    }
+                    String[] a=timeLabel.getText().split(":");
+                    int cost=Integer.parseInt(a[1])*60+Integer.parseInt(a[2]);
+                    //用户超时，弹出警告框
+                    if(cost>=10*mainForm.num&&showDialog==true) {
+                        if(JOptionPane.showConfirmDialog(null, readTxtLine(language,OVER_TIME),readTxtLine(language, WRONG), JOptionPane.YES_NO_OPTION)==0){
+                            showDialog=false;
+                        }
+                        else{
+                            isRun=false;
+                            showDialog=false;
+                            frame.dispose();
+                        }
                     }
                 }
                 try {
@@ -383,7 +399,6 @@ public class calculateForm extends JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e){
-
     }
 
 }
