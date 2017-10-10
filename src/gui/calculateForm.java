@@ -43,6 +43,7 @@ public class calculateForm extends JFrame implements ActionListener {
     public static final int CORRECT_EXPORT=17;
     public static final int WRONG_EXPORT=18;
     public static final int OVER_TIME=19;
+    public static final int ADD_ERR=20;
 
     //定义各组件
     private String[] ques=new String[mainForm.num];
@@ -55,6 +56,7 @@ public class calculateForm extends JFrame implements ActionListener {
     private JPanel[] quesPanel=new JPanel[mainForm.num];
     private int rightCount,wrongCount=0;
     private boolean isRun=false;
+    private boolean isCompleted=false;
     private boolean showDialog=true;
     private BufferedWriter writer;
     private BufferedReader reader;
@@ -220,6 +222,19 @@ public class calculateForm extends JFrame implements ActionListener {
                     }
                 }
 
+
+                //假设所有题目都已完成
+                isCompleted=true;
+                //判断是否所有题目都已经完成
+                for (int n=0;n<mainForm.num;n++)
+                {
+                    if (ansField[n].getText().equals(""))
+                    {
+                        isCompleted=false;
+                        break;
+                    }
+                }
+
                 int ratio=rightCount*100/(rightCount+wrongCount);
                 String[] a=timeLabel.getText().split(":");
                 int cost=Integer.parseInt(a[1])*60+Integer.parseInt(a[2]);
@@ -253,32 +268,43 @@ public class calculateForm extends JFrame implements ActionListener {
         outQsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String root=System.getProperty("user.dir");
-                String path=root+"//wrongQues.txt";
-                File file=new File(path);
-                try {
-                    OutputStream os=new FileOutputStream(file,true);
-                    SimpleDateFormat date=new SimpleDateFormat("yyyy-MM-dd HH:MM:SS");
-                    os.write('\r');
-                    os.write('\n');
-                    os.write(('['+date.format(new Date())+']').getBytes());
-                    os.write('\r');
-                    os.write('\n');
-                    for(int i=0;i<wrongQues.length;i++){
-                        os.write(wrongQues[i].getBytes());
+
+                if(isCompleted)
+                {
+                    String root=System.getProperty("user.dir");
+                    String path=root+"//wrongQues.txt";
+                    File file=new File(path);
+                    try {
+                        OutputStream os=new FileOutputStream(file,true);
+                        SimpleDateFormat date=new SimpleDateFormat("yyyy-MM-dd HH:MM:SS");
                         os.write('\r');
                         os.write('\n');
+                        os.write(('['+date.format(new Date())+']').getBytes());
+                        os.write('\r');
+                        os.write('\n');
+                        for(int i=0;i<wrongQues.length;i++){
+                            os.write(wrongQues[i].getBytes());
+                            os.write('\r');
+                            os.write('\n');
+                        }
+                        os.close();
+                        JOptionPane.showMessageDialog(null,readTxtLine(language,CORRECT_EXPORT));
+                    } catch (FileNotFoundException e1) {
+                        JOptionPane.showMessageDialog(null,readTxtLine(language,WRONG_EXPORT));
+                    } catch (IOException e1) {
+                        JOptionPane.showMessageDialog(null,readTxtLine(language,WRONG_EXPORT));
                     }
-                    os.close();
-                    JOptionPane.showMessageDialog(null,readTxtLine(language,CORRECT_EXPORT));
-                } catch (FileNotFoundException e1) {
-                    JOptionPane.showMessageDialog(null,readTxtLine(language,WRONG_EXPORT));
-                } catch (IOException e1) {
-                    JOptionPane.showMessageDialog(null,readTxtLine(language,WRONG_EXPORT));
                 }
+                else
+                {
+                    JOptionPane.showMessageDialog(null,readTxtLine(language,ADD_ERR));
+                }
+
 
             }
         });
+
+
 
     }
 

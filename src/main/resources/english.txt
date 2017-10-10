@@ -12,8 +12,9 @@ Correct
 Wrong
 Four arithmetic operations
 Please input the answer of N0.
-Question
+ Question
 Export
 Already exported
 Failed
 You have a timeout,sure to continue?
+The wrong questions will not be ADDED for you have not finished the test!
