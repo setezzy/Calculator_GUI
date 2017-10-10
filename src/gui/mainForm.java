@@ -161,16 +161,33 @@ public class mainForm extends JFrame implements ActionListener{
             }
             else{
                 num=Integer.parseInt(inputField.getText());
-                calculateForm cf = null;
-                try {
-                    cf = new calculateForm();
-                } catch (URISyntaxException e1) {
-                    e1.printStackTrace();
+                if(num>200)
+                {
+                    if (languageEdition==TRADITIONAL_CHINESE){
+                        JOptionPane.showMessageDialog(null,"要算的題目太多了，試試200以內吧！","出錯啦",JOptionPane.ERROR_MESSAGE);
+                    }
+                    else if (languageEdition==ENGLISH){
+                        JOptionPane.showMessageDialog(null,"Please input a number less than 200","It's Wrong",JOptionPane.ERROR_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null,"要算的题目太多了，试试200以内吧！","太多了",JOptionPane.ERROR_MESSAGE);
+                    }
+
                 }
-                //移除原有内容
-                frame.remove(this.getContentPane());
-                frame.setVisible(false);
-                cf.setVisible(true);
+                else
+                {
+                    calculateForm cf = null;
+                    try {
+                        cf = new calculateForm();
+                    } catch (URISyntaxException e1) {
+                        e1.printStackTrace();
+                    }
+                    //移除原有内容
+                    frame.remove(this.getContentPane());
+                    frame.setVisible(false);
+                    cf.setVisible(true);
+                }
+
             }
         }
     }
