@@ -1,7 +1,7 @@
 # Calculator_GUI
-###GUI version of calculators
-###which designed for primary student
-##main function
+### GUI version of calculators
+### which designed for primary student
+## main function
 
 * **a. 菜单选择功能**。用户点击不同菜单项可选择退出系统，切换语言以及查看使用说明
 
@@ -17,7 +17,7 @@
 
 
 
-##version1.2（2017/10/10）
+## version1.2（2017/10/10）
 
 * 支持GUI界面用户作答
 * 支持计时功能
@@ -25,14 +25,14 @@
 * 支持多语言
 * 支持导出错题功能
 
-##version1.1（2017/10/08）
+## version1.1（2017/10/08）
 
 * 支持GUI界面用户作答
 * 支持计时功能
 * 新增历史记录功能
 * 支持多语言
 
-##version1.0（2010/10/07）
+## version1.0（2010/10/07）
 
 * 支持GUI界面用户作答
 * 支持计时功能
