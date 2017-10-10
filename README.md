@@ -3,7 +3,8 @@
 ### which designed for primary student
 
 ## 程序运行说明
-运行时请保证Calculator_GUI.jar和libs文件夹在同一目录
+运行：解压calculatorJar后，点击jar运行
+请保证Calculator_GUI.jar和libs文件夹在同一目录
 
 ## main function
 
