@@ -1,6 +1,10 @@
 # Calculator_GUI
 ### GUI version of calculators
 ### which designed for primary student
+
+## 程序运行说明
+运行时请保证Calculator_GUI.jar和libs文件夹在同一目录
+
 ## main function
 
 * **a. 菜单选择功能**。用户点击不同菜单项可选择退出系统，切换语言以及查看使用说明
