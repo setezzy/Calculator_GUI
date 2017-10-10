@@ -322,7 +322,7 @@ public class calculateForm extends JFrame implements ActionListener {
                     String[] a=timeLabel.getText().split(":");
                     int cost=Integer.parseInt(a[1])*60+Integer.parseInt(a[2]);
                     //用户超时，弹出警告框
-                    if(cost>=10*mainForm.num&&showDialog==true) {
+                    if(cost>=50*mainForm.num&&showDialog==true) {
                         if(JOptionPane.showConfirmDialog(null, readTxtLine(language,OVER_TIME),readTxtLine(language, WRONG), JOptionPane.YES_NO_OPTION)==0){
                             showDialog=false;
                         }

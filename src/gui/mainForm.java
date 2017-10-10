@@ -137,13 +137,13 @@ public class mainForm extends JFrame implements ActionListener{
 
         if(e.getSource()==item4){
             if (languageEdition==TRADITIONAL_CHINESE){
-                JOptionPane.showMessageDialog(null,"系統-->退出\n顯示-->多語言切換\n在主界面輸入妳想要做的題目數量，點擊開始按鈕開始做題");
+                JOptionPane.showMessageDialog(null,"在主界面輸入妳想要做的題目數量，點擊開始按鈕開始做題\n\n點擊計時則進入自測模式\n每道題限時50s");
             }
             else if (languageEdition==ENGLISH){
-                JOptionPane.showMessageDialog(null,"system-->quit\nshow-->lannguage change\nplease input the number of Questions and click the start button");
+                JOptionPane.showMessageDialog(null,"please input the number of Questions and click the start button\n\nenter self-test mode when start Timer\ntime limited: 50s per question");
             }
             else {
-                JOptionPane.showMessageDialog(null,"系统-->退出\n显示-->多语言切换\n在主界面输入你想要做的题目数量，点击开始按钮开始做题");
+                JOptionPane.showMessageDialog(null,"在主界面输入你想要做的题目数量，点击开始按钮开始做题\n\n点击计时则进入自测模式\n每道题限时50s");
             }
 
         }
