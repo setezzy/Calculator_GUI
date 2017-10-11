@@ -4,7 +4,12 @@
 
 ## 程序运行说明
 运行：解压calculatorJar后，点击jar运行
-请保证Calculator_GUI.jar和libs文件夹在同一目录
+     请保证Calculator_GUI.jar和libs文件夹在同一目录
+     （若无运行环境，可直接下载jre安装，无需配置环境）
+新增：考虑到用户无Java运行环境的情况，将jre加入到.jar所在文件夹，用户点击run.bat就可以运行，无需自己安装jre
+      run.bat内容: .\jre7\bin\java -jar .\Calculator_GUI.jar
+      但目前jre没有来得及精简，文件比较大无法上传
+      
 
 ## main function
 
