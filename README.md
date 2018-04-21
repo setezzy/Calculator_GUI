@@ -1,6 +1,6 @@
 # Calculator_GUI
 ### GUI version of calculators
-### which designed for primary student
+### designed for primary students
 
 ## 程序运行说明
      运行：解压calculatorJar后，点击jar运行
