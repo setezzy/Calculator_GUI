@@ -6,8 +6,6 @@
      运行：解压calculatorJar后，点击jar运行
 
      请保证Calculator_GUI.jar和libs文件夹在同一目录
-     
-     （若无运行环境，可直接下载jre安装，无需配置环境）
       
 
 ## main function
