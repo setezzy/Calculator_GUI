@@ -1,6 +1,3 @@
-# Calculator_GUI
-### GUI version of calculators
-### designed for primary students
 
 ## 程序运行说明
      运行：解压calculatorJar后，点击jar运行
@@ -22,7 +19,11 @@
 
 * **f. 判断用户输入**。用户输入答案时判断其输入答案是否有效：答案不为空，且不是包含字母或汉字等非法字符的字符串。
 
+**功能图**
+![](http://images2017.cnblogs.com/blog/1238159/201710/1238159-20171010191024855-575869494.png)
 
+**程序流图**
+![](http://images2017.cnblogs.com/blog/1238159/201710/1238159-20171010190931340-189119777.png)
 
 ## version1.2（2017/10/10）
 
